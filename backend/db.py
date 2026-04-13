@@ -89,10 +89,6 @@ class Database:
         self.conn.commit()
 
     def add_expense(self,cat_id,user_id,amount,note,date):
-
-        if self.sheet is None :
-            from backend.sheets import SheetDB
-            self.sheet = SheetDB()
         # SQLITE INSERT
         self.cur.execute("""
         INSERT INTO Expenses(cat_id,user_id,amount,note,date)
@@ -100,23 +96,30 @@ class Database:
         """,(cat_id,user_id,amount,note,date))
         self.conn.commit()
 
-        # GOOGLE SHEETS APPEND
+        # GOOGLE SHEETS APPEND (optional)
+        try:
+            if self.sheet is None:
+                from backend.sheets import SheetDB
+                self.sheet = SheetDB()
 
-        # 1) FETCH NAMES FOR SHEETS
-        self.cur.execute("SELECT name FROM Users WHERE user_id = ?",(user_id,))
-        user_name = self.cur.fetchone()[0]
+            # 1) FETCH NAMES FOR SHEETS
+            self.cur.execute("SELECT name FROM Users WHERE user_id = ?",(user_id,))
+            user_name = self.cur.fetchone()[0]
 
-        self.cur.execute("SELECT title FROM Category WHERE cat_id = ?",(cat_id,))
-        category_name = self.cur.fetchone()[0]
+            self.cur.execute("SELECT title FROM Category WHERE cat_id = ?",(cat_id,))
+            category_name = self.cur.fetchone()[0]
 
-        # 2) APPEND TO SHEETS 
-        self.sheet.append_row([
-            user_name,
-            category_name,
-            amount,
-            date,
-            note
-        ])
+            # 2) APPEND TO SHEETS 
+            self.sheet.append_row([
+                user_name,
+                category_name,
+                amount,
+                date,
+                note
+            ])
+        except Exception as e:
+            # Sheets not available, skip
+            pass
 
 
 
