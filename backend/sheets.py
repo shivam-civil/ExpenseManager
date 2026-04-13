@@ -10,8 +10,12 @@ class SheetDB:
             "https://www.googleapis.com/auth/drive"
         ]
 
-        # Load credentials from Streamlit secrets
-        creds_dict = st.secrets["google_credentials"]
+        # Load credentials from Streamlit secrets or local file
+        try:
+            creds_dict = st.secrets["google_credentials"]
+        except KeyError:
+            with open("credentials.json", "r") as f:
+                creds_dict = json.load(f)
         creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
 
         client = gspread.authorize(creds)
