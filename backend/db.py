@@ -18,6 +18,8 @@ class Database:
         self.__cur = self.conn.cursor()
         self.conn.execute("PRAGMA foreign_keys = ON;")
         self.sheet = None
+        self.create_db()  # Ensure tables are created on init
+        self.add_default_data()  # Add default data if empty
 
     @property    
     def conn(self):
@@ -66,7 +68,19 @@ class Database:
         """)
         self.conn.commit()
 
-
+    def add_default_data(self):
+        # Check if users table is empty
+        self.cur.execute("SELECT COUNT(*) FROM Users")
+        if self.cur.fetchone()[0] == 0:
+            # Add default user
+            self.add_user("Default User", "Self", "2023-01-01")
+        # Check categories
+        self.cur.execute("SELECT COUNT(*) FROM Category")
+        if self.cur.fetchone()[0] == 0:
+            # Add default categories
+            self.add_category("Food")
+            self.add_category("Transport")
+            self.add_category("Entertainment")
 
     def drop_db(self):
         self.cur.execute("DROP TABLE IF EXISTS Expenses")
