@@ -56,3 +56,13 @@ nav.run()
 
 # TAGS ON SIDEBAR IN ALL PAGES 
 st.sidebar.write("Made with 💌 by Shivam")
+
+
+
+
+
+
+###https://youtube.com/shorts/u668dtIdiok?si=UIKPfe4iL-AGf2UK
+
+https://youtube.com/shorts/eoYhtZ5vM2Q?si=OFC9rcntXneylkal
+####
